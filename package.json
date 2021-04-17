@@ -1,0 +1,24 @@
+{
+  "name": "markdown-generator",
+  "version": "0.0.0",
+  "description": "cli for markdown contents with frontmatter",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git"
+  },
+  "author": "shuent",
+  "bin": {
+    "mdg": "index.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "app-root-path": "^3.0.0",
+    "dateformat": "^4.5.1",
+    "gray-matter": "^4.0.2",
+    "mocha": "^8.3.2",
+    "yaml": "^2.0.0-4"
+  }
+}
