@@ -27,5 +27,7 @@ module.exports = {
 };
 ```
 
+For builtin attribute, You can use `date` and format using this package. https://github.com/felixge/node-dateformat
+
 ## Contribution
 Any contribution is welcome.
