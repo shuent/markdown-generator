@@ -1,6 +1,6 @@
 {
   "name": "@shuent/markdown-generator",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "cli for markdown contents with frontmatter",
   "main": "index.js",
   "scripts": {
