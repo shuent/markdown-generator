@@ -1,15 +1,15 @@
 {
-  "name": "markdown-generator",
+  "name": "@shuent/markdown-generator",
   "version": "0.0.0",
   "description": "cli for markdown contents with frontmatter",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git"
   },
-  "author": "shuent",
+  "author": "Shunta Uehara",
   "bin": {
     "mdg": "index.js"
   },
@@ -18,7 +18,10 @@
     "app-root-path": "^3.0.0",
     "dateformat": "^4.5.1",
     "gray-matter": "^4.0.2",
-    "mocha": "^8.3.2",
     "yaml": "^2.0.0-4"
+  },
+  "devDependencies": {
+    "mocha": "^8.3.2",
+    "rewire": "^5.0.0"
   }
 }
