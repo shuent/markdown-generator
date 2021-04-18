@@ -7,9 +7,12 @@
     "test": "mocha"
   },
   "repository": {
-    "type": "git"
+    "type": "git",
+    "url": "git+https://github.com/shuent/markdown-generator.git" 
   },
+  "homepage": "https://github.com/shuent/markdown-generator",
   "author": "Shunta Uehara",
+  "keywords": ["markdown", "cli", "frontmatter"],
   "bin": {
     "mdg": "index.js"
   },
