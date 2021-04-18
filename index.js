@@ -8,6 +8,8 @@ const matter = require("gray-matter");
 const dateFormat = require("dateformat");
 const appRoot = require("app-root-path");
 
+const DEFAULT_TEMPLATE_NAME = "defaultBlogTemplate.md";
+
 const handleErr = (err) => {
   if (err) {
     throw err;
@@ -28,37 +30,51 @@ const config = (() => {
   }
 })();
 
+const getBuiltinAttribute = (attribute) =>
+  attribute
+    ? {
+        ...(attribute.date && {
+          date: dateFormat(new Date(), attribute.date),
+        }),
+      }
+    : {};
+
+const createNewMd = (template, builtinAttribute) => {
+  const defaultMdTemplatePath = path.join(__dirname, DEFAULT_TEMPLATE_NAME);
+  const fileContent = fs.existsSync(template)
+    ? fs.readFileSync(template, "utf8")
+    : fs.readFileSync(defaultMdTemplatePath, "utf8");
+
+  const { content: mdContent, data: yamlData } = matter(fileContent);
+  const dataAdded = YAML.stringify({
+    ...yamlData,
+    ...getBuiltinAttribute(builtinAttribute),
+  });
+  return (newMd = ["---\n", dataAdded, "---\n", mdContent].join(""));
+};
+
+const createNewMdFilePath = (userDefinedName, fileName, prefix) => {
+  const newFileName = userDefinedName || fileName;
+  const fileNamePrefix = prefix || "";
+  return path.join(config.directory, `${fileNamePrefix}${newFileName}.md`);
+};
+
 const createMdFile = () => {
   if (!fs.existsSync(config.directory)) {
     fs.mkdir(config.directory, handleErr);
   }
 
-  const fileName = argv[2] || config.fileName;
-
-  const fileContent = fs.existsSync(config.template)
-    ? fs.readFileSync(config.template, "utf8")
-    : fs.readFileSync(path.join(__dirname, "defaultBlogTemplate.md"), "utf8");
-
-  const { content: mdContent, data } = matter(fileContent);
-
-  const builtinAttribute = config.builtinAttribute
-    ? {
-        ...(config.builtinAttribute.date && {
-          date: dateFormat(new Date(), config.builtinAttribute.date),
-        }),
-      }
-    : {};
-
-  const dataAdded = YAML.stringify({ ...data, ...builtinAttribute });
-
-  const newMd = ["---\n", dataAdded, "---\n", mdContent].join("");
-
-  const filePath = path.join(
-    config.directory,
-    `${config.prefix || ""}${fileName}.md`
+  const newMdFilePath = createNewMdFilePath(
+    argv[2],
+    config.fileName,
+    config.prefix
   );
-  
-  fs.writeFile(filePath, newMd, handleErr);
+  const newMd = createNewMd(config.template, config.builtinAttribute);
+
+  fs.writeFile(newMdFilePath, newMd, (err) => {
+    handleErr(err);
+    console.log(`content added: ${newMdFilePath}`);
+  });
 };
 
 createMdFile();
