@@ -67,23 +67,23 @@ describe("functions", () => {
       });
     });
 
-    it("if template has attributes", () => {
-      fs.writeFileSync("./testTemplate.md", "---\ntitle: apple\n---\ndefault");
-      assert.strictEqual(
-        createNewMd("../testTemplate.md"),
-        "---\ntitle: apple\n---\ndefault"
-      );
-    });
+    // it("if template has attributes", () => {
+    //   fs.writeFileSync("./testTemplate.md", "---\ntitle: apple\n---\ndefault");
+    //   assert.strictEqual(
+    //     createNewMd("../testTemplate.md"),
+    //     "---\ntitle: apple\n---\ndefault"
+    //   );
+    // });
 
-    it("if template has attributes and built in attribute", () => {
-      fs.writeFileSync("./testTemplate.md", "---\ntitle: apple\n---\ndefault");
-      assert.strictEqual(
-        createNewMd("../testTemplate.md", {
-          date: "yyyy",
-        }),
-        "---\ntitle: apple\ndate: 2021\n---\ndefault"
-      );
-      fs.rmSync("./testTemplate.md");
-    });
+    // it("if template has attributes and built in attribute", () => {
+    //   fs.writeFileSync("./testTemplate.md", "---\ntitle: apple\n---\ndefault");
+    //   assert.strictEqual(
+    //     createNewMd("../testTemplate.md", {
+    //       date: "yyyy",
+    //     }),
+    //     "---\ntitle: apple\ndate: 2021\n---\ndefault"
+    //   );
+    //   fs.rmSync("./testTemplate.md");
+    // });
   });
 });
