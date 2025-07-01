@@ -1,5 +1,5 @@
-import { promises as fs } from 'fs';
-import { dirname, resolve } from 'path';
+import { promises as fs, existsSync, mkdirSync, readdirSync, statSync, copyFileSync } from 'fs';
+import { dirname, resolve, join } from 'path';
 
 export async function ensureDir(dirPath: string): Promise<void> {
   try {
@@ -38,4 +38,27 @@ export async function writeFile(filePath: string, content: string): Promise<void
 
 export function resolvePath(...paths: string[]): string {
   return resolve(process.cwd(), ...paths);
+}
+
+export function copyDirSync(src: string, dest: string): void {
+  try {
+    if (!existsSync(dest)) {
+      mkdirSync(dest, { recursive: true });
+    }
+    
+    const files = readdirSync(src);
+    
+    for (const file of files) {
+      const srcPath = join(src, file);
+      const destPath = join(dest, file);
+      
+      if (statSync(srcPath).isDirectory()) {
+        copyDirSync(srcPath, destPath);
+      } else {
+        copyFileSync(srcPath, destPath);
+      }
+    }
+  } catch (error) {
+    throw new Error(`Failed to copy directory ${src} to ${dest}: ${error}`);
+  }
 }
