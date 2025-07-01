@@ -32,5 +32,11 @@ coverage/
 *.temp
 .cache/
 
-# User directories (preserve for backward compatibility)
-blog
+# User-generated content (when testing CLI locally)
+/blog
+/notes
+/content
+/docs
+/journal
+mdg.config.js
+mdg.config.ts

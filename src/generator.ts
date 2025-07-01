@@ -83,6 +83,7 @@ export class MarkdownGenerator {
     return `---
 title: "{{title}}"
 date: {{date}}
+author: {{author}}
 ---
 
 # {{title}}

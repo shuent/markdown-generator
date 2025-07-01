@@ -89,9 +89,34 @@ mdg "Quick Note"
 # Creates: notes/2024-01-15-quick-note.md (using default template)
 ```
 
+## Quick Start
+
+1. **Copy sample files**:
+   ```bash
+   # Copy basic config
+   cp sample/mdg.config.js ./
+   
+   # Copy templates
+   cp -r sample/templates ./
+   ```
+
+2. **Start generating**:
+   ```bash
+   mdg  # Interactive mode
+   ```
+
+3. **Explore examples**:
+   ```bash
+   # Check the sample directory for:
+   # - Configuration examples
+   # - Template examples  
+   # - Generated file examples
+   ls sample/
+   ```
+
 ## Configuration
 
-Create `mdg.config.js` or `mdg.config.ts` in your project root:
+Create `mdg.config.js` or `mdg.config.ts` in your project root. See the `sample/` directory for examples:
 
 ```typescript
 // mdg.config.ts

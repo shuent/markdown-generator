@@ -16,7 +16,7 @@ describe('MarkdownGenerator', () => {
       test: {
         fileName: '{{date}}-{{slug}}',
         directory: testDir,
-        template: './templates/default.md',
+        template: './nonexistent.md', // Will use default template
         variables: {
           category: 'test',
         },
