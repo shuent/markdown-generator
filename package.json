@@ -1,6 +1,6 @@
 {
   "name": "@shuent/markdown-generator",
-  "version": "2.0.0",
+  "version": "0.2.0",
   "description": "Modern TypeScript CLI for generating markdown files with templates and interactive prompts",
   "main": "dist/index.js",
   "type": "module",
@@ -19,11 +19,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shuent/markdown-generator.git" 
+    "url": "git+https://github.com/shuent/markdown-generator.git"
   },
   "homepage": "https://github.com/shuent/markdown-generator",
   "author": "Shunta Uehara",
-  "keywords": ["markdown", "cli", "typescript", "generator", "template", "interactive"],
+  "keywords": [
+    "markdown",
+    "cli",
+    "typescript",
+    "generator",
+    "template",
+    "interactive"
+  ],
   "license": "MIT",
   "dependencies": {
     "commander": "^12.0.0",

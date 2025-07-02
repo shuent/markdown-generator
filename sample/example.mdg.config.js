@@ -1,8 +1,9 @@
-import { MdgConfig } from './dist/types';
+// @ts-check
 
-const config: MdgConfig = {
+/** @type {import('../src/types').MdgConfig} */
+const config = {
   defaultTemplate: 'blog',
-  
+
   // Global variables available to all templates
   globalVariables: {
     author: 'John Doe',
@@ -10,7 +11,7 @@ const config: MdgConfig = {
     currentYear: () => new Date().getFullYear().toString(),
     environment: () => process.env.NODE_ENV || 'development',
   },
-  
+
   templates: {
     blog: {
       fileName: '{{date}}-{{slug}}',
@@ -18,7 +19,7 @@ const config: MdgConfig = {
       template: './templates/blog.md',
       variables: {
         category: 'general',
-        isDraft: () => process.env.NODE_ENV !== 'production' ? 'true' : 'false',
+        isDraft: () => (process.env.NODE_ENV !== 'production' ? 'true' : 'false'),
       },
       prompts: {
         title: {
@@ -36,7 +37,7 @@ const config: MdgConfig = {
         },
       },
     },
-    
+
     note: {
       fileName: '{{date}}-{{slug}}',
       directory: 'notes',
@@ -53,7 +54,7 @@ const config: MdgConfig = {
         },
       },
     },
-    
+
     documentation: {
       fileName: '{{slug}}',
       directory: 'docs/{{section}}',
@@ -76,7 +77,7 @@ const config: MdgConfig = {
         },
       },
     },
-    
+
     daily: {
       fileName: '{{date}}',
       directory: 'journal/{{year}}/{{month}}',
