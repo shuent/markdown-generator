@@ -1,0 +1,76 @@
+name: Create Release on Version Change
+
+on:
+  push:
+    branches: [main]
+    paths: ['package.json']
+
+jobs:
+  check-version-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Get current version
+        id: current-version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get previous version
+        id: previous-version
+        run: |
+          git checkout HEAD~1 -- package.json || echo "No previous package.json found"
+          if [ -f package.json ]; then
+            PREV_VERSION=$(node -p "require('./package.json').version")
+          else
+            PREV_VERSION="0.0.0"
+          fi
+          echo "version=$PREV_VERSION" >> $GITHUB_OUTPUT
+          git checkout HEAD -- package.json
+
+      - name: Check if version changed
+        id: version-check
+        run: |
+          if [ "${{ steps.current-version.outputs.version }}" != "${{ steps.previous-version.outputs.version }}" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Version changed from ${{ steps.previous-version.outputs.version }} to ${{ steps.current-version.outputs.version }}"
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "Version not changed"
+          fi
+
+      - name: Create git tag
+        if: steps.version-check.outputs.changed == 'true'
+        run: |
+          TAG_NAME="v${{ steps.current-version.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
+          git push origin "$TAG_NAME"
+
+      - name: Create GitHub Release
+        if: steps.version-check.outputs.changed == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.current-version.outputs.version }}
+          release_name: Release v${{ steps.current-version.outputs.version }}
+          body: |
+            ## Release v${{ steps.current-version.outputs.version }}
+            
+            This release was automatically created when the package version was updated from v${{ steps.previous-version.outputs.version }} to v${{ steps.current-version.outputs.version }}.
+            
+            ### Changes
+            - Package version updated to ${{ steps.current-version.outputs.version }}
+            
+            ### Installation
+            ```bash
+            npm install -g @shuent/markdown-generator@${{ steps.current-version.outputs.version }}
+            ```
+          draft: false
+          prerelease: false
