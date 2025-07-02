@@ -76,6 +76,8 @@ mdg --var slug="my-blog-post"
 
 # Create with specific template and slug
 mdg --template blog --var slug="my-blog-post"
+# or use the short form
+mdg -t blog --var slug="my-blog-post"
 
 # Create with multiple variables
 mdg --var slug="my-blog-post" title="My Blog Post" author="John Doe" tags="typescript,cli"
@@ -355,6 +357,8 @@ mdg list
 
 # Create with specific template
 mdg --template [template-name] --var slug="[slug]"
+# or use the short form
+mdg -t [template-name] --var slug="[slug]"
 
 # Create with any variables
 mdg --var slug="[slug]" title="[title]" author="[author]" tags="[tags]"
