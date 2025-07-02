@@ -24,18 +24,41 @@ export const createDefaultDependencies = (): CommandDependencies => ({
 });
 
 // Pure functions for command logic
-export const createGeneratorOptions = (title?: string, template?: string): GeneratorOptions => ({
-  title: title || 'Untitled',
+export const createGeneratorOptions = (
+  slug?: string,
+  template?: string,
+  title?: string,
+  variables?: Record<string, string>,
+): GeneratorOptions => ({
+  slug,
   template,
+  title,
+  variables,
 });
 
-export const shouldUseInteractiveMode = (title?: string, template?: string): boolean =>
-  !title && !template;
+export const shouldUseInteractiveMode = (slug?: string, template?: string): boolean =>
+  !slug && !template;
+
+export const parseVariables = (varArray?: string[]): Record<string, string> => {
+  if (!varArray) return {};
+
+  const variables: Record<string, string> = {};
+  for (const varString of varArray) {
+    const [key, ...valueParts] = varString.split('=');
+    if (key && valueParts.length > 0) {
+      variables[key] = valueParts.join('=');
+    }
+  }
+  return variables;
+};
 
 // Generate command handler
 export const generateCommand =
   (deps: CommandDependencies) =>
-  async (title?: string, options?: { template?: string }): Promise<CommandResult> => {
+  async (
+    slug?: string,
+    options?: { template?: string; title?: string; var?: string[] },
+  ): Promise<CommandResult> => {
     const configResult = await asyncTryCatch(deps.configLoader);
     if (!configResult.success) return configResult;
 
@@ -43,10 +66,11 @@ export const generateCommand =
     const generator = deps.generatorFactory(config);
 
     const optionsResult = await asyncTryCatch(async () => {
-      if (shouldUseInteractiveMode(title, options?.template)) {
+      if (shouldUseInteractiveMode(slug, options?.template)) {
         return await deps.interactiveMode(config);
       }
-      return createGeneratorOptions(title, options?.template);
+      const variables = parseVariables(options?.var);
+      return createGeneratorOptions(slug, options?.template, options?.title, variables);
     });
 
     if (!optionsResult.success) return optionsResult;

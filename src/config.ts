@@ -23,7 +23,6 @@ const MdgConfigSchema = z.object({
   templates: z.record(TemplateConfigSchema),
 });
 
-
 export async function loadConfig(): Promise<MdgConfig> {
   const explorer = cosmiconfig('mdg', {
     searchPlaces: [

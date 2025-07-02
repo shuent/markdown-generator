@@ -20,13 +20,15 @@ program
   .name('mdg')
   .description('Modern markdown generator with templates and interactive prompts')
   .version(packageJson.version)
-  .argument('[title]', 'Title for the markdown file')
+  .argument('[slug]', 'Slug for the markdown file')
   .option('-t, --template <name>', 'Template to use')
+  .option('--title <title>', 'Title for the markdown file')
+  .option('--var <key=value...>', 'Additional variables')
   .action(
-    safeCliAction(async (title, options) => {
+    safeCliAction(async (slug, options) => {
       const deps = createDefaultDependencies();
       const generate = generateCommand(deps);
-      const result = await generate(title, options);
+      const result = await generate(slug, options);
 
       return fold(
         result,

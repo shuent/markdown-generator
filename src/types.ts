@@ -24,6 +24,7 @@ export interface MdgConfig {
 export interface GeneratorOptions {
   template?: string;
   title?: string;
+  slug?: string;
   variables?: Record<string, string>;
 }
 
@@ -34,6 +35,5 @@ export interface BuiltInVariables {
   year: string;
   month: string;
   day: string;
-  slug: string;
-  title: string;
+  slug?: string;
 }

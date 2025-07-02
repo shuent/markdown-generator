@@ -35,23 +35,25 @@ describe('MarkdownGenerator', () => {
   it('should generate markdown file with interpolated variables', async () => {
     const generator = new MarkdownGenerator(config);
     const filePath = await generator.generate({
-      title: 'Test Post',
+      slug: 'test-post',
       template: 'test',
+      variables: {
+        title: 'Test Post',
+      },
     });
 
     expect(filePath).toMatch(/test-output.*test-post\.md$/);
     expect(await fileExists(filePath)).toBe(true);
 
     const content = await fs.readFile(filePath, 'utf-8');
-    expect(content).toContain('title: "Test Post"');
-    expect(content).toContain('author: Test Author');
-    expect(content).toContain('# Test Post');
+    expect(content).toContain('date:');
+    // Default template no longer includes author, it's a custom variable
   });
 
-  it('should create slug from title', async () => {
+  it('should use provided slug', async () => {
     const generator = new MarkdownGenerator(config);
     const filePath = await generator.generate({
-      title: 'My Amazing Blog Post!',
+      slug: 'my-amazing-blog-post',
       template: 'test',
     });
 
@@ -61,16 +63,18 @@ describe('MarkdownGenerator', () => {
   it('should handle custom variables', async () => {
     const generator = new MarkdownGenerator(config);
     const filePath = await generator.generate({
-      title: 'Custom Test',
+      slug: 'custom-test',
       template: 'test',
       variables: {
+        title: 'Custom Test',
         tags: 'test, vitest',
         customField: 'custom value',
       },
     });
 
     const content = await fs.readFile(filePath, 'utf-8');
-    expect(content).toContain('Test Author'); // Global variable
+    expect(content).toContain('date:'); // Built-in variable
+    // Author is now a custom variable and needs to be in the template
   });
 
   it('should list available templates', async () => {
@@ -78,5 +82,19 @@ describe('MarkdownGenerator', () => {
     const templates = await generator.listTemplates();
     
     expect(templates).toEqual(['test']);
+  });
+
+  it('should handle missing slug gracefully', async () => {
+    const generator = new MarkdownGenerator(config);
+    const filePath = await generator.generate({
+      template: 'test',
+      variables: {
+        title: 'No Slug Test',
+      },
+    });
+
+    // Should still generate a file, but with {{slug}} in the filename
+    expect(filePath).toContain('{{slug}}.md');
+    expect(await fileExists(filePath)).toBe(true);
   });
 });

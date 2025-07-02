@@ -2,7 +2,7 @@
 
 import { TemplateConfig, GeneratorOptions, BuiltInVariables } from '../types.js';
 import { getDateVariables } from '../utils/date.js';
-import { createSlug, interpolate } from '../utils/string.js';
+import { interpolate } from '../utils/string.js';
 import { Result, asyncTryCatch } from '../utils/functional.js';
 
 // Interfaces for dependency injection
@@ -38,12 +38,11 @@ export const createDefaultTemplateRenderer = (): TemplateRenderer => ({
 });
 
 // Pure functions for template processing
-export const createBuiltInVariables = (title: string): BuiltInVariables => {
+export const createBuiltInVariables = (slug?: string): BuiltInVariables => {
   const dateVars = getDateVariables();
   return {
     ...dateVars,
-    title,
-    slug: createSlug(title),
+    ...(slug ? { slug } : {}),
   } as BuiltInVariables;
 };
 
@@ -61,12 +60,8 @@ export const mergeVariables = (
 });
 
 export const getDefaultTemplate = (): string => `---
-title: "{{title}}"
 date: {{date}}
-author: {{author}}
 ---
-
-# {{title}}
 
 Write your content here...
 `;
@@ -82,14 +77,20 @@ export const processTemplate =
     resolver: VariableResolver,
   ) =>
   async (): Promise<Result<{ content: string; filePath: string }, Error>> => {
-    const title = options.title || 'Untitled';
-    const builtInVars = createBuiltInVariables(title);
+    const slug = options.slug || options.variables?.slug;
+    const builtInVars = createBuiltInVariables(slug);
+
+    // Merge all variables, including optional title
+    const allVariables = {
+      ...(options.title ? { title: options.title } : {}),
+      ...options.variables,
+    };
 
     const variables = mergeVariables(
       builtInVars,
       globalVariables,
       template.variables,
-      options.variables,
+      allVariables,
       resolver,
     );
 
