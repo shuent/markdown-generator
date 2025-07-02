@@ -45,7 +45,7 @@ export const createInitPaths = (cwd: string, packageDir: string) => ({
   configSource: join(packageDir, 'sample', 'example.mdg.config.js'),
   configDest: join(cwd, 'mdg.config.js'),
   templatesSource: join(packageDir, 'sample', 'templates'),
-  templatesDest: join(cwd, 'templates'),
+  templatesDest: join(cwd, 'mdg_templates'),
 });
 
 export const shouldSkipFile = (dest: string, fileExists: (path: string) => boolean): boolean =>
