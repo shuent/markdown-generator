@@ -1,7 +1,6 @@
 import { cosmiconfig } from 'cosmiconfig';
 import { z } from 'zod';
 import { MdgConfig } from './types.js';
-import { resolvePath } from './utils/file.js';
 
 const PromptConfigSchema = z.object({
   type: z.enum(['input', 'list', 'checkbox']),
@@ -24,25 +23,6 @@ const MdgConfigSchema = z.object({
   templates: z.record(TemplateConfigSchema),
 });
 
-const DEFAULT_CONFIG: MdgConfig = {
-  defaultTemplate: 'default',
-  globalVariables: {
-    author: process.env.USER || 'Author',
-  },
-  templates: {
-    default: {
-      fileName: '{{date}}-{{slug}}',
-      directory: 'content',
-      template: resolvePath('templates', 'default.md'),
-      prompts: {
-        title: {
-          type: 'input',
-          message: 'Title:',
-        },
-      },
-    },
-  },
-};
 
 export async function loadConfig(): Promise<MdgConfig> {
   const explorer = cosmiconfig('mdg', {
@@ -61,7 +41,7 @@ export async function loadConfig(): Promise<MdgConfig> {
     const result = await explorer.search();
 
     if (!result || !result.config) {
-      return DEFAULT_CONFIG;
+      throw new Error('No configuration file found. Run "mdg init" to create one.');
     }
 
     const validated = MdgConfigSchema.parse(result.config);
