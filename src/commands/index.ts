@@ -24,21 +24,17 @@ export const createDefaultDependencies = (): CommandDependencies => ({
 });
 
 // Pure functions for command logic
-export const createGeneratorOptions = (
-  title?: string,
-  template?: string
-): GeneratorOptions => ({
+export const createGeneratorOptions = (title?: string, template?: string): GeneratorOptions => ({
   title: title || 'Untitled',
   template,
 });
 
-export const shouldUseInteractiveMode = (
-  title?: string,
-  template?: string
-): boolean => !title && !template;
+export const shouldUseInteractiveMode = (title?: string, template?: string): boolean =>
+  !title && !template;
 
 // Generate command handler
-export const generateCommand = (deps: CommandDependencies) =>
+export const generateCommand =
+  (deps: CommandDependencies) =>
   async (title?: string, options?: { template?: string }): Promise<CommandResult> => {
     const configResult = await asyncTryCatch(deps.configLoader);
     if (!configResult.success) return configResult;
@@ -55,16 +51,14 @@ export const generateCommand = (deps: CommandDependencies) =>
 
     if (!optionsResult.success) return optionsResult;
 
-    const generateResult = await asyncTryCatch(() => 
-      generator.generate(optionsResult.data)
-    );
+    const generateResult = await asyncTryCatch(() => generator.generate(optionsResult.data));
 
     return generateResult;
   };
 
 // List templates command handler
-export const listTemplatesCommand = (deps: CommandDependencies) =>
-  async (): Promise<Result<string[], Error>> => {
+export const listTemplatesCommand =
+  (deps: CommandDependencies) => async (): Promise<Result<string[], Error>> => {
     const configResult = await asyncTryCatch(deps.configLoader);
     if (!configResult.success) return configResult;
 
@@ -75,22 +69,14 @@ export const listTemplatesCommand = (deps: CommandDependencies) =>
   };
 
 // Format template list for display
-export const formatTemplateList = (
-  templates: string[],
-  defaultTemplate?: string
-): string[] =>
-  templates.map(template => {
+export const formatTemplateList = (templates: string[], defaultTemplate?: string): string[] =>
+  templates.map((template) => {
     const isDefault = defaultTemplate === template;
     return `  ${isDefault ? '❯' : ' '} ${template}${isDefault ? ' (default)' : ''}`;
   });
 
 // Display templates
-export const displayTemplates = (
-  templates: string[],
-  defaultTemplate?: string
-): void => {
+export const displayTemplates = (templates: string[], defaultTemplate?: string): void => {
   console.log('Available templates:');
-  formatTemplateList(templates, defaultTemplate).forEach(line => 
-    console.log(line)
-  );
+  formatTemplateList(templates, defaultTemplate).forEach((line) => console.log(line));
 };

@@ -16,36 +16,34 @@ export class MarkdownGenerator {
     private config: MdgConfig,
     private fileService: FileService = createDefaultFileService(),
     private variableResolver: VariableResolver = createDefaultVariableResolver(),
-    private templateRenderer: TemplateRenderer = createDefaultTemplateRenderer()
+    private templateRenderer: TemplateRenderer = createDefaultTemplateRenderer(),
   ) {}
 
   async generate(options: GeneratorOptions): Promise<string> {
     const template = getTemplate(this.config, options.template);
-    
+
     const process = processTemplate(
       template,
       options,
       this.config.globalVariables,
       this.fileService,
       this.templateRenderer,
-      this.variableResolver
+      this.variableResolver,
     );
-    
+
     const result = await process();
-    
+
     return fold(
       result,
       async ({ content, filePath }) => {
         await this.fileService.write(filePath, content);
         return filePath;
       },
-      (error) => { throw error; }
+      (error) => {
+        throw error;
+      },
     );
   }
-
-
-
-
 
   async listTemplates(): Promise<string[]> {
     return Object.keys(this.config.templates);

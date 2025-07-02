@@ -21,6 +21,6 @@ export function interpolate(template: string, variables: Record<string, any>): s
 export function parseList(input: string, separator = ','): string[] {
   return input
     .split(separator)
-    .map(item => item.trim())
-    .filter(item => item.length > 0);
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
 }

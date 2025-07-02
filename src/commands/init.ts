@@ -23,7 +23,7 @@ export interface InitResult {
 // Default dependencies
 export const createDefaultInitDependencies = (): InitDependencies => {
   const __dirname = dirname(fileURLToPath(import.meta.url));
-  
+
   return {
     getCurrentDir: () => process.cwd(),
     getPackageDir: () => join(__dirname, '..', '..'),
@@ -47,7 +47,7 @@ export const shouldSkipFile = (dest: string, fileExists: (path: string) => boole
 export const copyFileIfNotExists = (
   src: string,
   dest: string,
-  deps: InitDependencies
+  deps: InitDependencies,
 ): { copied: boolean; message: string } => {
   if (shouldSkipFile(dest, deps.fileExists)) {
     return {
@@ -66,7 +66,7 @@ export const copyFileIfNotExists = (
 export const copyDirectoryIfNotExists = (
   src: string,
   dest: string,
-  deps: InitDependencies
+  deps: InitDependencies,
 ): { copied: boolean; message: string } => {
   if (shouldSkipFile(dest, deps.fileExists)) {
     return {
@@ -90,31 +90,24 @@ export const createSuccessMessage = (configCopied: boolean, templatesCopied: boo
 };
 
 // Init command handler
-export const initCommand = (deps: InitDependencies) =>
-  async (): Promise<Result<InitResult, Error>> =>
+export const initCommand =
+  (deps: InitDependencies) => async (): Promise<Result<InitResult, Error>> =>
     asyncTryCatch(async () => {
       const cwd = deps.getCurrentDir();
       const packageDir = deps.getPackageDir();
       const paths = createInitPaths(cwd, packageDir);
 
-      const configResult = copyFileIfNotExists(
-        paths.configSource,
-        paths.configDest,
-        deps
-      );
+      const configResult = copyFileIfNotExists(paths.configSource, paths.configDest, deps);
       console.log(configResult.message);
 
       const templatesResult = copyDirectoryIfNotExists(
         paths.templatesSource,
         paths.templatesDest,
-        deps
+        deps,
       );
       console.log(templatesResult.message);
 
-      const message = createSuccessMessage(
-        configResult.copied,
-        templatesResult.copied
-      );
+      const message = createSuccessMessage(configResult.copied, templatesResult.copied);
 
       return {
         configCopied: configResult.copied,

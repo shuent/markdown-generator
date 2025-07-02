@@ -59,7 +59,7 @@ export async function loadConfig(): Promise<MdgConfig> {
 
   try {
     const result = await explorer.search();
-    
+
     if (!result || !result.config) {
       return DEFAULT_CONFIG;
     }
@@ -81,10 +81,10 @@ export function getTemplateNames(config: MdgConfig): string[] {
 export function getTemplate(config: MdgConfig, templateName?: string) {
   const name = templateName || config.defaultTemplate || 'default';
   const template = config.templates[name];
-  
+
   if (!template) {
     throw new Error(`Template '${name}' not found`);
   }
-  
+
   return template;
 }

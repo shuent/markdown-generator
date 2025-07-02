@@ -45,13 +45,13 @@ export function copyDirSync(src: string, dest: string): void {
     if (!existsSync(dest)) {
       mkdirSync(dest, { recursive: true });
     }
-    
+
     const files = readdirSync(src);
-    
+
     for (const file of files) {
       const srcPath = join(src, file);
       const destPath = join(dest, file);
-      
+
       if (statSync(srcPath).isDirectory()) {
         copyDirSync(srcPath, destPath);
       } else {

@@ -33,7 +33,7 @@ export const createDefaultVariableResolver = (): VariableResolver => ({
 });
 
 export const createDefaultTemplateRenderer = (): TemplateRenderer => ({
-  render: (template: string, variables: Record<string, any>): string => 
+  render: (template: string, variables: Record<string, any>): string =>
     interpolate(template, variables),
 });
 
@@ -52,7 +52,7 @@ export const mergeVariables = (
   globalVars: Record<string, any> = {},
   templateVars: Record<string, any> = {},
   optionVars: Record<string, any> = {},
-  resolver: VariableResolver
+  resolver: VariableResolver,
 ): Record<string, any> => ({
   ...builtInVars,
   ...resolver.resolve(globalVars),
@@ -72,48 +72,50 @@ Write your content here...
 `;
 
 // Template processing pipeline
-export const processTemplate = (
-  template: TemplateConfig,
-  options: GeneratorOptions,
-  globalVariables: Record<string, any> = {},
-  fileService: FileService,
-  renderer: TemplateRenderer,
-  resolver: VariableResolver
-) => async (): Promise<Result<{ content: string; filePath: string }, Error>> => {
-  const title = options.title || 'Untitled';
-  const builtInVars = createBuiltInVariables(title);
-  
-  const variables = mergeVariables(
-    builtInVars,
-    globalVariables,
-    template.variables,
-    options.variables,
-    resolver
-  );
+export const processTemplate =
+  (
+    template: TemplateConfig,
+    options: GeneratorOptions,
+    globalVariables: Record<string, any> = {},
+    fileService: FileService,
+    renderer: TemplateRenderer,
+    resolver: VariableResolver,
+  ) =>
+  async (): Promise<Result<{ content: string; filePath: string }, Error>> => {
+    const title = options.title || 'Untitled';
+    const builtInVars = createBuiltInVariables(title);
 
-  // Get template content
-  const templateContentResult = await asyncTryCatch(async () => {
-    if (await fileService.exists(template.template)) {
-      return await fileService.read(template.template);
-    }
-    return getDefaultTemplate();
-  });
+    const variables = mergeVariables(
+      builtInVars,
+      globalVariables,
+      template.variables,
+      options.variables,
+      resolver,
+    );
 
-  if (!templateContentResult.success) return templateContentResult;
+    // Get template content
+    const templateContentResult = await asyncTryCatch(async () => {
+      if (await fileService.exists(template.template)) {
+        return await fileService.read(template.template);
+      }
+      return getDefaultTemplate();
+    });
 
-  // Render template
-  const content = renderer.render(templateContentResult.data, variables);
-  
-  // Generate file path
-  const fileName = renderer.render(template.fileName, variables);
-  const directory = renderer.render(template.directory, variables);
-  const filePath = fileService.resolvePath(directory, `${fileName}.md`);
+    if (!templateContentResult.success) return templateContentResult;
 
-  return {
-    success: true,
-    data: {
-      content,
-      filePath,
-    }
+    // Render template
+    const content = renderer.render(templateContentResult.data, variables);
+
+    // Generate file path
+    const fileName = renderer.render(template.fileName, variables);
+    const directory = renderer.render(template.directory, variables);
+    const filePath = fileService.resolvePath(directory, `${fileName}.md`);
+
+    return {
+      success: true,
+      data: {
+        content,
+        filePath,
+      },
+    };
   };
-};
