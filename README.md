@@ -39,13 +39,26 @@ Our goal is simple: to eliminate the boring, repetitive tasks and let you stay i
 - 💡 **TypeScript**: Fully typed for better development experience
 - ⚡ **Fast**: Built with modern tooling for optimal performance
 
-## Installation
+## Quick Start
+
+### 1. Setup mdg config
 
 ```bash
-npm install -g @shuent/markdown-generator
-# or
-npm install --save-dev @shuent/markdown-generator
+npx @shuent/markdown-generator init
 ```
+
+This command will:
+
+- Create a `mdg.config.js` configuration file
+- Set up a `mdg_templates/` directory with sample templates
+
+### 2. Start generating
+
+```bash
+npx @shuent/markdown-generator  # Interactive mode
+```
+
+> **Note**: If you prefer to install globally with `npm install -g @shuent/markdown-generator`, you can use the `mdg` command directly instead of `npx @shuent/markdown-generator`.
 
 ## Usage
 
@@ -99,30 +112,6 @@ mdg --var slug="first-article"
 # You can then edit the title in the generated markdown file
 ```
 
-## Quick Start
-
-1. **Initialize your project**:
-
-   ```bash
-   mdg init
-   ```
-
-   This command will:
-   - Create a `mdg.config.js` configuration file
-   - Set up a `mdg_templates/` directory with sample templates
-   - Guide you through initial configuration
-
-2. **Start generating**:
-
-   ```bash
-   mdg  # Interactive mode
-   ```
-
-3. **Customize your setup**:
-   - Edit `mdg.config.js` to add/modify templates
-   - Customize template files in the `mdg_templates/` directory
-   - Add your own variables and prompts
-
 ## Configuration
 
 Create `mdg.config.js` or `mdg.config.ts` in your project root. See the `sample/` directory for examples:
@@ -144,7 +133,7 @@ const config: MdgConfig = {
     year: () => new Date().getFullYear().toString(),
     month: () => String(new Date().getMonth() + 1).padStart(2, '0'),
     day: () => String(new Date().getDate()).padStart(2, '0'),
-    
+
     // Your custom variables
     author: 'John Doe',
     siteUrl: 'https://example.com',
@@ -256,7 +245,7 @@ globalVariables: {
   year: () => new Date().getFullYear().toString(),
   month: () => String(new Date().getMonth() + 1).padStart(2, '0'),
   day: () => String(new Date().getDate()).padStart(2, '0'),
-  
+
   // Static values
   author: 'John Doe',
   siteUrl: 'https://example.com',
@@ -355,16 +344,26 @@ mdg --version
 # List available templates
 mdg list
 
-# Create with specific template
-mdg --template [template-name] --var slug="[slug]"
-# or use the short form
-mdg -t [template-name] --var slug="[slug]"
-
-# Create with any variables
-mdg --var slug="[slug]" title="[title]" author="[author]" tags="[tags]"
-
-# Interactive mode (when no variables provided)
+# Interactive mode (default when no options provided)
 mdg
+
+# Create with specific template
+mdg --template <template-name>
+# or use the short form
+mdg -t <template-name>
+
+# Create with template and variables
+mdg --template <template-name> --var key=value key2="value with spaces"
+# or use the short form
+mdg -t <template-name> --var key=value
+
+# Pass multiple variables (space-separated)
+mdg --var slug=my-post title="My Post Title" author="John Doe"
+
+# Variables support:
+# - Simple values: --var slug=my-post
+# - Quoted values with spaces: --var title="My Post Title"
+# - Multiple assignments: --var key1=value1 key2=value2 key3=value3
 ```
 
 ## Development
