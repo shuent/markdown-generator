@@ -1,6 +1,6 @@
 {
   "name": "@shuent/markdown-generator",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "publishConfig": {
     "access": "public"
   },
