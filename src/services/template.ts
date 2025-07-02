@@ -1,7 +1,6 @@
 // Template service following SOLID principles
 
-import { TemplateConfig, GeneratorOptions, BuiltInVariables } from '../types.js';
-import { getDateVariables } from '../utils/date.js';
+import { TemplateConfig, GeneratorOptions } from '../types.js';
 import { interpolate } from '../utils/string.js';
 import { Result, asyncTryCatch } from '../utils/functional.js';
 
@@ -38,29 +37,20 @@ export const createDefaultTemplateRenderer = (): TemplateRenderer => ({
 });
 
 // Pure functions for template processing
-export const createBuiltInVariables = (slug?: string): BuiltInVariables => {
-  const dateVars = getDateVariables();
-  return {
-    ...dateVars,
-    ...(slug ? { slug } : {}),
-  } as BuiltInVariables;
-};
 
 export const mergeVariables = (
-  builtInVars: BuiltInVariables,
   globalVars: Record<string, any> = {},
   templateVars: Record<string, any> = {},
   optionVars: Record<string, any> = {},
   resolver: VariableResolver,
 ): Record<string, any> => ({
-  ...builtInVars,
   ...resolver.resolve(globalVars),
   ...resolver.resolve(templateVars),
   ...resolver.resolve(optionVars),
 });
 
 export const getDefaultTemplate = (): string => `---
-date: {{date}}
+title: Untitled
 ---
 
 Write your content here...
@@ -77,17 +67,14 @@ export const processTemplate =
     resolver: VariableResolver,
   ) =>
   async (): Promise<Result<{ content: string; filePath: string }, Error>> => {
-    const slug = options.slug || options.variables?.slug;
-    const builtInVars = createBuiltInVariables(slug);
-
-    // Merge all variables, including optional title
+    // Merge all variables, including optional title and slug
     const allVariables = {
       ...(options.title ? { title: options.title } : {}),
+      ...(options.slug ? { slug: options.slug } : {}),
       ...options.variables,
     };
 
     const variables = mergeVariables(
-      builtInVars,
       globalVariables,
       template.variables,
       allVariables,

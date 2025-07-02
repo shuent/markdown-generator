@@ -11,6 +11,7 @@ describe('MarkdownGenerator', () => {
     defaultTemplate: 'test',
     globalVariables: {
       author: 'Test Author',
+      date: () => new Date().toISOString().split('T')[0], // Explicitly provide date
     },
     templates: {
       test: {
@@ -46,8 +47,8 @@ describe('MarkdownGenerator', () => {
     expect(await fileExists(filePath)).toBe(true);
 
     const content = await fs.readFile(filePath, 'utf-8');
-    expect(content).toContain('date:');
-    // Default template no longer includes author, it's a custom variable
+    expect(content).toContain('title: Untitled');
+    // Default template content is used when template file doesn't exist
   });
 
   it('should use provided slug', async () => {
@@ -73,8 +74,8 @@ describe('MarkdownGenerator', () => {
     });
 
     const content = await fs.readFile(filePath, 'utf-8');
-    expect(content).toContain('date:'); // Built-in variable
-    // Author is now a custom variable and needs to be in the template
+    expect(content).toContain('title: Untitled');
+    // All variables are now explicitly defined in config or provided via options
   });
 
   it('should list available templates', async () => {

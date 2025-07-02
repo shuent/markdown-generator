@@ -39,26 +39,14 @@ export const createGeneratorOptions = (
 export const shouldUseInteractiveMode = (slug?: string, template?: string): boolean =>
   !slug && !template;
 
-export const parseVariables = (varArray?: string[]): Record<string, string> => {
-  if (!varArray) return {};
-
-  const variables: Record<string, string> = {};
-  for (const varString of varArray) {
-    const [key, ...valueParts] = varString.split('=');
-    if (key && valueParts.length > 0) {
-      variables[key] = valueParts.join('=');
-    }
-  }
-  return variables;
-};
 
 // Generate command handler
 export const generateCommand =
   (deps: CommandDependencies) =>
-  async (
-    slug?: string,
-    options?: { template?: string; title?: string; var?: string[] },
-  ): Promise<CommandResult> => {
+  async (options?: {
+    template?: string;
+    variables?: Record<string, string>;
+  }): Promise<CommandResult> => {
     const configResult = await asyncTryCatch(deps.configLoader);
     if (!configResult.success) return configResult;
 
@@ -66,11 +54,16 @@ export const generateCommand =
     const generator = deps.generatorFactory(config);
 
     const optionsResult = await asyncTryCatch(async () => {
+      const slug = options?.variables?.slug;
       if (shouldUseInteractiveMode(slug, options?.template)) {
         return await deps.interactiveMode(config);
       }
-      const variables = parseVariables(options?.var);
-      return createGeneratorOptions(slug, options?.template, options?.title, variables);
+      return createGeneratorOptions(
+        slug,
+        options?.template,
+        options?.variables?.title,
+        options?.variables || {},
+      );
     });
 
     if (!optionsResult.success) return optionsResult;

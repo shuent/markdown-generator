@@ -28,12 +28,3 @@ export interface GeneratorOptions {
   variables?: Record<string, string>;
 }
 
-export interface BuiltInVariables {
-  date: string;
-  datetime: string;
-  timestamp: string;
-  year: string;
-  month: string;
-  day: string;
-  slug?: string;
-}

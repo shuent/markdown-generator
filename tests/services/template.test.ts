@@ -1,29 +1,70 @@
 import { describe, it, expect } from 'vitest';
-import { createBuiltInVariables } from '../../src/services/template';
+import { 
+  mergeVariables,
+  createDefaultVariableResolver,
+  createDefaultTemplateRenderer,
+  getDefaultTemplate 
+} from '../../src/services/template';
 
-describe('createBuiltInVariables', () => {
-  it('should create built-in variables with slug when provided', () => {
-    const variables = createBuiltInVariables('test-slug');
-    
-    expect(variables.slug).toBe('test-slug');
-    expect(variables.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    expect(variables.datetime).toBeTruthy();
-    expect(variables.timestamp).toBeTruthy();
-    expect(variables.year).toBeTruthy();
-    expect(variables.month).toBeTruthy();
-    expect(variables.day).toBeTruthy();
+describe('template service', () => {
+  describe('mergeVariables', () => {
+    it('should merge variables from multiple sources', () => {
+      const resolver = createDefaultVariableResolver();
+      const globalVars = { author: 'Global Author' };
+      const templateVars = { category: 'Template Category' };
+      const optionVars = { title: 'Option Title' };
+      
+      const merged = mergeVariables(globalVars, templateVars, optionVars, resolver);
+      
+      expect(merged.author).toBe('Global Author');
+      expect(merged.category).toBe('Template Category');
+      expect(merged.title).toBe('Option Title');
+    });
+
+    it('should resolve function variables', () => {
+      const resolver = createDefaultVariableResolver();
+      const vars = { 
+        static: 'static value',
+        dynamic: () => 'dynamic value'
+      };
+      
+      const merged = mergeVariables({}, {}, vars, resolver);
+      
+      expect(merged.static).toBe('static value');
+      expect(merged.dynamic).toBe('dynamic value');
+    });
+
+    it('should prioritize option variables over template and global', () => {
+      const resolver = createDefaultVariableResolver();
+      const globalVars = { title: 'Global Title' };
+      const templateVars = { title: 'Template Title' };
+      const optionVars = { title: 'Option Title' };
+      
+      const merged = mergeVariables(globalVars, templateVars, optionVars, resolver);
+      
+      expect(merged.title).toBe('Option Title');
+    });
   });
 
-  it('should create built-in variables without slug when not provided', () => {
-    const variables = createBuiltInVariables();
-    
-    expect(variables.slug).toBeUndefined();
-    expect(variables.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  describe('createDefaultTemplateRenderer', () => {
+    it('should render template with variables', () => {
+      const renderer = createDefaultTemplateRenderer();
+      const template = 'Hello {{name}}, today is {{date}}';
+      const variables = { name: 'John', date: '2024-01-15' };
+      
+      const result = renderer.render(template, variables);
+      
+      expect(result).toBe('Hello John, today is 2024-01-15');
+    });
   });
 
-  it('should handle empty slug', () => {
-    const variables = createBuiltInVariables('');
-    
-    expect(variables.slug).toBeUndefined();
+  describe('getDefaultTemplate', () => {
+    it('should return default markdown template', () => {
+      const template = getDefaultTemplate();
+      
+      expect(template).toContain('---');
+      expect(template).toContain('title: Untitled');
+      expect(template).toContain('Write your content here...');
+    });
   });
 });

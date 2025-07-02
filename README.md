@@ -18,7 +18,7 @@ This isn't just a minor inconvenience; it's a **creative bottleneck**. This repe
 
 - **For the Blogger & Content Creator:**
   - **Before:** "Ugh, I need to figure out the filename slug and copy the frontmatter from last week's post."
-  - **After:** Run `mdg "my-article"`, and start writing immediately. The file is created with the slug you want, and you can edit the title and other metadata directly in the generated markdown file. Your creative flow is never interrupted.
+  - **After:** Run `mdg --var slug="my-article" title="My Article" tags="tech,tutorial"`, and start writing immediately. The file is created with all your metadata pre-filled. Your creative flow is never interrupted.
 
 - **For the Documentation Team:**
   - **Before:** New team members create files with inconsistent naming conventions (`YYYY-MM-DD` vs `DD-MM-YYYY`) and forget required frontmatter fields.
@@ -26,7 +26,7 @@ This isn't just a minor inconvenience; it's a **creative bottleneck**. This repe
 
 - **For the Diligent Note-Taker:**
   - **Before:** A fleeting idea strikes during a meeting. You scramble to create a new file, name it, and add context, but the idea's initial spark is lost in the process.
-  - **After:** Simply type `mdg --template note "meeting-notes"`. A structured note file appears, ready for you to capture your thoughts without breaking stride.
+  - **After:** Simply type `mdg --template note --var slug="meeting-notes" title="Weekly Planning"`. A structured note file appears, ready for you to capture your thoughts without breaking stride.
 
 Our goal is simple: to eliminate the boring, repetitive tasks and let you stay in your creative zone. Let `mdg` handle the housekeeping, so you can focus on writing.
 
@@ -68,17 +68,20 @@ $ mdg
 
 ### Direct Mode
 
-Specify slug directly:
+Specify variables using the --var flag:
 
 ```bash
 # Create a blog post with slug
-mdg "my-blog-post"
+mdg --var slug="my-blog-post"
 
-# Create with specific template
-mdg --template blog "my-blog-post"
+# Create with specific template and slug
+mdg --template blog --var slug="my-blog-post"
 
-# Create with title and other variables
-mdg "my-blog-post" --title "My Blog Post" --var author="John Doe"
+# Create with multiple variables
+mdg --var slug="my-blog-post" title="My Blog Post" author="John Doe" tags="typescript,cli"
+
+# Any variable can be passed
+mdg --var slug="my-post" category="tutorial" draft="true"
 
 # List available templates
 mdg list
@@ -89,7 +92,7 @@ mdg list
 For default template:
 
 ```bash
-mdg "first-article"
+mdg --var slug="first-article"
 # Creates: blog/2024-01-15-first-article.md (using default template)
 # You can then edit the title in the generated markdown file
 ```
@@ -132,9 +135,17 @@ const config: MdgConfig = {
 
   // Global variables available to all templates
   globalVariables: {
+    // Common date variables
+    date: () => new Date().toISOString().split('T')[0],
+    datetime: () => new Date().toISOString(),
+    timestamp: () => Date.now().toString(),
+    year: () => new Date().getFullYear().toString(),
+    month: () => String(new Date().getMonth() + 1).padStart(2, '0'),
+    day: () => String(new Date().getDate()).padStart(2, '0'),
+    
+    // Your custom variables
     author: 'John Doe',
     siteUrl: 'https://example.com',
-    currentYear: () => new Date().getFullYear().toString(),
   },
 
   // Template definitions
@@ -226,24 +237,36 @@ category: {{category}}
 Write your content here...
 ```
 
-## Available Variables
+## Variables
 
-### Built-in Variables
+All variables must be defined in your configuration. There are no built-in variables - this gives you complete control over your templates.
 
-- `{{date}}` - Current date (format: YYYY-MM-DD)
-- `{{datetime}}` - Current date and time
-- `{{timestamp}}` - Unix timestamp
-- `{{year}}` - Current year
-- `{{month}}` - Current month
-- `{{day}}` - Current day
-- `{{slug}}` - Slug (from CLI argument or prompt)
+### Common Variables
 
-### Custom Variables
+Here are some commonly used variables you can add to your config:
 
-Define custom variables in your config:
+```typescript
+globalVariables: {
+  // Date-related variables
+  date: () => new Date().toISOString().split('T')[0], // YYYY-MM-DD
+  datetime: () => new Date().toISOString(),
+  timestamp: () => Date.now().toString(),
+  year: () => new Date().getFullYear().toString(),
+  month: () => String(new Date().getMonth() + 1).padStart(2, '0'),
+  day: () => String(new Date().getDate()).padStart(2, '0'),
+  
+  // Static values
+  author: 'John Doe',
+  siteUrl: 'https://example.com',
+}
+```
 
-- Static values: `author: 'John Doe'`
-- Dynamic values: `currentTime: () => new Date().toLocaleTimeString()`
+### Variable Types
+
+- **Static values**: `author: 'John Doe'`
+- **Dynamic values**: `date: () => new Date().toISOString().split('T')[0]`
+- **From CLI**: `--var slug="my-post" title="My Title" customVar="value"`
+- **From prompts**: Variables collected through interactive prompts
 
 ## Prompt Types
 
@@ -331,12 +354,12 @@ mdg --version
 mdg list
 
 # Create with specific template
-mdg --template [template-name] "[slug]"
+mdg --template [template-name] --var slug="[slug]"
 
-# Create with title
-mdg "[slug]" --title "[title]"
+# Create with any variables
+mdg --var slug="[slug]" title="[title]" author="[author]" tags="[tags]"
 
-# Interactive mode
+# Interactive mode (when no variables provided)
 mdg
 ```
 

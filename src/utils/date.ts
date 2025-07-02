@@ -13,13 +13,3 @@ export function formatDateTime(date: Date = new Date()): string {
   return `${dateStr} ${hours}:${minutes}:${seconds}`;
 }
 
-export function getDateVariables(date: Date = new Date()): Record<string, string> {
-  return {
-    date: formatDate(date),
-    datetime: formatDateTime(date),
-    timestamp: String(date.getTime()),
-    year: String(date.getFullYear()),
-    month: String(date.getMonth() + 1).padStart(2, '0'),
-    day: String(date.getDate()).padStart(2, '0'),
-  };
-}
