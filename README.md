@@ -91,28 +91,24 @@ mdg "Quick Note"
 
 ## Quick Start
 
-1. **Copy sample files**:
+1. **Initialize your project**:
    ```bash
-   # Copy basic config
-   cp sample/mdg.config.js ./
-   
-   # Copy templates
-   cp -r sample/templates ./
+   mdg init
    ```
+   This command will:
+   - Create a `mdg.config.js` configuration file
+   - Set up a `templates/` directory with sample templates
+   - Guide you through initial configuration
 
 2. **Start generating**:
    ```bash
    mdg  # Interactive mode
    ```
 
-3. **Explore examples**:
-   ```bash
-   # Check the sample directory for:
-   # - Configuration examples
-   # - Template examples  
-   # - Generated file examples
-   ls sample/
-   ```
+3. **Customize your setup**:
+   - Edit `mdg.config.js` to add/modify templates
+   - Customize template files in the `templates/` directory
+   - Add your own variables and prompts
 
 ## Configuration
 
@@ -311,6 +307,9 @@ templates: {
 ## CLI Commands
 
 ```bash
+# Initialize configuration and templates
+mdg init
+
 # Show help
 mdg --help
 

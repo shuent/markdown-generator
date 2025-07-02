@@ -22,11 +22,18 @@ export interface InitResult {
 
 // Default dependencies
 export const createDefaultInitDependencies = (): InitDependencies => {
-  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  
+  // When bundled, we need to find the package root differently
+  // Check if we're running from dist/index.js
+  const packageDir = __filename.includes('/dist/index.js') 
+    ? dirname(__dirname) // Go up from dist/
+    : join(__dirname, '..', '..'); // Development mode
 
   return {
     getCurrentDir: () => process.cwd(),
-    getPackageDir: () => join(__dirname, '..', '..'),
+    getPackageDir: () => packageDir,
     fileExists: existsSync,
     copyFile: copyFileSync,
     copyDirectory: copyDirSync,
@@ -35,10 +42,10 @@ export const createDefaultInitDependencies = (): InitDependencies => {
 
 // Pure functions for init logic
 export const createInitPaths = (cwd: string, packageDir: string) => ({
-  configSource: join(packageDir, 'sample', 'mdg.config.js'),
+  configSource: join(packageDir, 'sample', 'example.mdg.config.js'),
   configDest: join(cwd, 'mdg.config.js'),
   templatesSource: join(packageDir, 'sample', 'templates'),
-  templatesDest: join(cwd, 'templates'),
+  templatesDest: join(cwd, 'mdg_templates'),
 });
 
 export const shouldSkipFile = (dest: string, fileExists: (path: string) => boolean): boolean =>
