@@ -42,9 +42,9 @@ Our goal is simple: to eliminate the boring, repetitive tasks and let you stay i
 ## Installation
 
 ```bash
-npm install -g markdown-generator
+npm install -g @shuent/markdown-generator
 # or
-npm install --save-dev markdown-generator
+npm install --save-dev @shuent/markdown-generator
 ```
 
 ## Usage
