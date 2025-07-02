@@ -1,6 +1,3 @@
-// @ts-check
-
-/** @type {import('../src/types').MdgConfig} */
 const config = {
   defaultTemplate: 'blog',
 

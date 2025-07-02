@@ -1,6 +1,9 @@
 {
   "name": "@shuent/markdown-generator",
   "version": "0.2.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "Modern TypeScript CLI for generating markdown files with templates and interactive prompts",
   "main": "dist/index.js",
   "type": "module",
