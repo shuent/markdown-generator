@@ -35,7 +35,7 @@ export const createDefaultInitDependencies = (): InitDependencies => {
 
 // Pure functions for init logic
 export const createInitPaths = (cwd: string, packageDir: string) => ({
-  configSource: join(packageDir, 'sample', 'mdg.config.js'),
+  configSource: join(packageDir, 'sample', 'example.mdg.config.js'),
   configDest: join(cwd, 'mdg.config.js'),
   templatesSource: join(packageDir, 'sample', 'templates'),
   templatesDest: join(cwd, 'templates'),
