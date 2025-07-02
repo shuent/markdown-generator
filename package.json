@@ -6,6 +6,7 @@
   },
   "description": "Modern TypeScript CLI for generating markdown files with templates and interactive prompts",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "bin": {
     "mdg": "./dist/index.js"
