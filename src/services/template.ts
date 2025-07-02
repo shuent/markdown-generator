@@ -1,8 +1,7 @@
 // Template service following SOLID principles
 
-import { TemplateConfig, GeneratorOptions, BuiltInVariables } from '../types.js';
-import { getDateVariables } from '../utils/date.js';
-import { createSlug, interpolate } from '../utils/string.js';
+import { TemplateConfig, GeneratorOptions } from '../types.js';
+import { interpolate } from '../utils/string.js';
 import { Result, asyncTryCatch } from '../utils/functional.js';
 
 // Interfaces for dependency injection
@@ -38,35 +37,21 @@ export const createDefaultTemplateRenderer = (): TemplateRenderer => ({
 });
 
 // Pure functions for template processing
-export const createBuiltInVariables = (title: string): BuiltInVariables => {
-  const dateVars = getDateVariables();
-  return {
-    ...dateVars,
-    title,
-    slug: createSlug(title),
-  } as BuiltInVariables;
-};
 
 export const mergeVariables = (
-  builtInVars: BuiltInVariables,
   globalVars: Record<string, any> = {},
   templateVars: Record<string, any> = {},
   optionVars: Record<string, any> = {},
   resolver: VariableResolver,
 ): Record<string, any> => ({
-  ...builtInVars,
   ...resolver.resolve(globalVars),
   ...resolver.resolve(templateVars),
   ...resolver.resolve(optionVars),
 });
 
 export const getDefaultTemplate = (): string => `---
-title: "{{title}}"
-date: {{date}}
-author: {{author}}
+title: Untitled
 ---
-
-# {{title}}
 
 Write your content here...
 `;
@@ -82,14 +67,17 @@ export const processTemplate =
     resolver: VariableResolver,
   ) =>
   async (): Promise<Result<{ content: string; filePath: string }, Error>> => {
-    const title = options.title || 'Untitled';
-    const builtInVars = createBuiltInVariables(title);
+    // Merge all variables, including optional title and slug
+    const allVariables = {
+      ...(options.title ? { title: options.title } : {}),
+      ...(options.slug ? { slug: options.slug } : {}),
+      ...options.variables,
+    };
 
     const variables = mergeVariables(
-      builtInVars,
       globalVariables,
       template.variables,
-      options.variables,
+      allVariables,
       resolver,
     );
 

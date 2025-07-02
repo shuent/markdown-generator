@@ -3,6 +3,15 @@ const config = {
 
   // Global variables available to all templates
   globalVariables: {
+    // Common date variables
+    date: () => new Date().toISOString().split('T')[0],
+    datetime: () => new Date().toISOString(),
+    timestamp: () => Date.now().toString(),
+    year: () => new Date().getFullYear().toString(),
+    month: () => String(new Date().getMonth() + 1).padStart(2, '0'),
+    day: () => String(new Date().getDate()).padStart(2, '0'),
+
+    // Your custom variables
     author: 'John Doe',
     siteUrl: 'https://example.com',
     currentYear: () => new Date().getFullYear().toString(),
@@ -13,12 +22,16 @@ const config = {
     blog: {
       fileName: '{{date}}-{{slug}}',
       directory: 'content/blog',
-      template: './templates/blog.md',
+      template: './mdg_templates/blog.md',
       variables: {
         category: 'general',
         isDraft: () => (process.env.NODE_ENV !== 'production' ? 'true' : 'false'),
       },
       prompts: {
+        slug: {
+          type: 'input',
+          message: 'Blog post slug (URL-friendly name):',
+        },
         title: {
           type: 'input',
           message: 'Blog post title:',
@@ -38,8 +51,12 @@ const config = {
     note: {
       fileName: '{{date}}-{{slug}}',
       directory: 'notes',
-      template: './templates/note.md',
+      template: './mdg_templates/note.md',
       prompts: {
+        slug: {
+          type: 'input',
+          message: 'Note slug:',
+        },
         title: {
           type: 'input',
           message: 'Note title:',
@@ -55,8 +72,12 @@ const config = {
     documentation: {
       fileName: '{{slug}}',
       directory: 'docs/{{section}}',
-      template: './templates/doc.md',
+      template: './mdg_templates/doc.md',
       prompts: {
+        slug: {
+          type: 'input',
+          message: 'Documentation slug:',
+        },
         title: {
           type: 'input',
           message: 'Documentation title:',
@@ -78,7 +99,7 @@ const config = {
     daily: {
       fileName: '{{date}}',
       directory: 'journal/{{year}}/{{month}}',
-      template: './templates/daily.md',
+      template: './mdg_templates/daily.md',
       variables: {
         dayOfWeek: () => new Date().toLocaleDateString('en-US', { weekday: 'long' }),
         time: () => new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),

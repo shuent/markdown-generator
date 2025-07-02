@@ -20,13 +20,28 @@ program
   .name('mdg')
   .description('Modern markdown generator with templates and interactive prompts')
   .version(packageJson.version)
-  .argument('[title]', 'Title for the markdown file')
   .option('-t, --template <name>', 'Template to use')
+  .option('-v, --var <assignments...>', 'Variables in key=value format (e.g., --var slug=my-post title="My Title")')
   .action(
-    safeCliAction(async (title, options) => {
+    safeCliAction(async (options) => {
       const deps = createDefaultDependencies();
       const generate = generateCommand(deps);
-      const result = await generate(title, options);
+      
+      // Parse variables from --var key=value format
+      const variables: Record<string, string> = {};
+      if (options.var) {
+        for (const assignment of options.var) {
+          const [key, ...valueParts] = assignment.split('=');
+          if (key && valueParts.length > 0) {
+            variables[key] = valueParts.join('=');
+          }
+        }
+      }
+      
+      const result = await generate({
+        template: options.template,
+        variables,
+      });
 
       return fold(
         result,

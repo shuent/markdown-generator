@@ -54,18 +54,21 @@ export const processAnswerValue = (
 
 export const extractTitleAndVariables = (answers: Record<string, any>): GeneratorOptions => {
   const variables: Record<string, string> = {};
-  let title = 'Untitled';
+  let title: string | undefined;
+  let slug: string | undefined;
 
   Object.entries(answers).forEach(([key, value]) => {
     if (key === 'title') {
       title = String(value);
+    } else if (key === 'slug') {
+      slug = String(value);
     } else {
       const { processedValue } = processAnswerValue(key, value);
       variables[key] = processedValue;
     }
   });
 
-  return { title, variables };
+  return { title, slug, variables };
 };
 
 export const collectAnswers =

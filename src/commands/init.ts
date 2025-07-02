@@ -24,10 +24,10 @@ export interface InitResult {
 export const createDefaultInitDependencies = (): InitDependencies => {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
-  
+
   // When bundled, we need to find the package root differently
   // Check if we're running from dist/index.js
-  const packageDir = __filename.includes('/dist/index.js') 
+  const packageDir = __filename.includes('/dist/index.js')
     ? dirname(__dirname) // Go up from dist/
     : join(__dirname, '..', '..'); // Development mode
 
