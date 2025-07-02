@@ -97,7 +97,7 @@ mdg "Quick Note"
    ```
    This command will:
    - Create a `mdg.config.js` configuration file
-   - Set up a `templates/` directory with sample templates
+   - Set up a `mdg_templates/` directory with sample templates
    - Guide you through initial configuration
 
 2. **Start generating**:
@@ -107,7 +107,7 @@ mdg "Quick Note"
 
 3. **Customize your setup**:
    - Edit `mdg.config.js` to add/modify templates
-   - Customize template files in the `templates/` directory
+   - Customize template files in the `mdg_templates/` directory
    - Add your own variables and prompts
 
 ## Configuration
@@ -134,7 +134,7 @@ const config: MdgConfig = {
     blog: {
       fileName: '{{date}}-{{slug}}',
       directory: 'content/blog',
-      template: './templates/blog.md',
+      template: './mdg_templates/blog.md',
       variables: {
         category: 'general',
       },
@@ -158,7 +158,7 @@ const config: MdgConfig = {
     note: {
       fileName: '{{date}}-{{slug}}',
       directory: 'notes',
-      template: './templates/note.md',
+      template: './mdg_templates/note.md',
       prompts: {
         title: {
           type: 'input',
@@ -175,7 +175,7 @@ const config: MdgConfig = {
     documentation: {
       fileName: '{{slug}}',
       directory: 'docs',
-      template: './templates/doc.md',
+      template: './mdg_templates/doc.md',
       prompts: {
         title: {
           type: 'input',
@@ -199,7 +199,7 @@ export default config;
 Create template files with frontmatter and variable placeholders:
 
 ```markdown
-## <!-- templates/blog.md -->
+## <!-- mdg_templates/blog.md -->
 
 title: "{{title}}"
 date: {{date}}
